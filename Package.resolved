@@ -74,15 +74,6 @@
         }
       },
       {
-        "package": "Stripe",
-        "repositoryURL": "https://github.com/vapor-community/stripe-provider.git",
-        "state": {
-          "branch": null,
-          "revision": "b44c55e3698b9f0e5a223ce9791af6f32f077336",
-          "version": "2.1.0"
-        }
-      },
-      {
         "package": "swift-nio",
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
@@ -125,15 +116,6 @@
           "branch": null,
           "revision": "43b57b5861d5181b906ac6411d28645e980bb638",
           "version": "1.0.1"
-        }
-      },
-      {
-        "package": "Transaction",
-        "repositoryURL": "https://github.com/skelpo/Transaction.git",
-        "state": {
-          "branch": null,
-          "revision": "ff4bc32a7f6b6dbdf3c5bad280a95880bc6bae72",
-          "version": "0.1.2"
         }
       },
       {
