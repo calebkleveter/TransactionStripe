@@ -1,4 +1,5 @@
 @_exported import Transaction
+import Vapor
 import Stripe
 import Service
 
@@ -8,7 +9,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
     public typealias Purchase = Prc
     public typealias Payment = Pay
     public typealias ExecutionData = String
-    public typealias ExecutionResponse = PaymentResponse<Pay.ID>
+    public typealias ExecutionResponse = PaymentResponse
     
     
     // MARK: - Properties
@@ -32,7 +33,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
         return purchase.payment(on: self.container, with: self)
     }
     
-    public func execute(payment: Pay, with data: String) -> EventLoopFuture<PaymentResponse<Payment.ID>> {
+    public func execute(payment: Pay, with data: String) -> EventLoopFuture<Pay> {
         return Future.flatMap(on: self.container) { () -> Future<StripeCharge> in
             let stripe = try self.container.make(StripeClient.self)
             let charge = try stripe.charge.create(
@@ -44,23 +45,8 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
             
             return charge
         }.map { charge in
-            if charge.captured && charge.amount == payment.amount {
-                return PaymentResponse(
-                    success: true,
-                    message: "All Good",
-                    redirectUrl: nil,
-                    data: nil,
-                    transactionId: payment.id
-                )
-            } else {
-                return PaymentResponse(
-                    success: false,
-                    message: "Charge failed",
-                    redirectUrl: nil,
-                    data: charge.failureMessage,
-                    transactionId: payment.id
-                )
-            }
+            payment.failureMessage = charge.failureMessage
+            return payment
         }
     }
     
@@ -70,5 +56,39 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
             let refund = try stripe.refund.create(charge: payment.externalID, amount: amount)
             return refund.transform(to: payment)
         }
+    }
+}
+
+extension StripeCreditCard: Transaction.PaymentResponse where Payment: ResponseCodable {
+    
+    public typealias CreatedResponse = Pay
+    public typealias ExecutedResponse = PaymentResponse
+    
+    public func created(from payment: Pay) -> Future<Pay> {
+        return self.container.future(payment)
+    }
+    
+    public func executed(from payment: Pay) -> Future<PaymentResponse> {
+        let response: TransactionStripe.PaymentResponse
+        
+        if let message = payment.failureMessage {
+            response = .init(
+                success: false,
+                message: "Failed to create transaction",
+                redirectUrl: nil,
+                data: message,
+                transactionId: String(describing: payment.id)
+            )
+        } else {
+            response = TransactionStripe.PaymentResponse(
+                success: true,
+                message: "Success",
+                redirectUrl: nil,
+                data: nil,
+                transactionId: String(describing: payment.id)
+            )
+        }
+        
+        return self.container.future(response)
     }
 }
