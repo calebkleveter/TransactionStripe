@@ -1,6 +1,6 @@
 import Stripe
 
-public protocol PaymentStructure {
+public protocol PaymentStructure: class {
     associatedtype OrderID
     associatedtype ID: Codable
     
