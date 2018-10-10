@@ -30,7 +30,15 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
     }
     
     public func payment(for purchase: Prc) -> EventLoopFuture<Pay> {
-        return purchase.payment(on: self.container, with: self)
+        return Future.flatMap(on: self.container) { () -> Future<ChargeID> in
+            guard let request = self.container as? Request else {
+                throw Abort(.internalServerError, reason: "Attempted to decode a Stripe type charge from a non-request container")
+            }
+            
+            return try request.content.decode(ChargeID.self)
+        }.flatMap { charge in
+            return purchase.payment(on: self.container, with: self, externalID: charge)
+        }
     }
     
     public func execute(payment: Pay, with data: String) -> EventLoopFuture<Pay> {
