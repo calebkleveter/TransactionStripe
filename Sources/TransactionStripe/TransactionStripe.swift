@@ -52,8 +52,12 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
     
     public func refund(payment: Pay, amount: Int?) -> EventLoopFuture<Pay> {
         return Future.flatMap(on: self.container) {
+            guard let external = payment.externalID else {
+                throw Abort(.custom(code: 418, reasonPhrase: "I'm a Teapot"), reason: "Unable to get ID for Stripe payment to refund")
+            }
+            
             let stripe = try self.container.make(StripeClient.self)
-            let refund = try stripe.refund.create(charge: payment.externalID, amount: amount)
+            let refund = try stripe.refund.create(charge: external, amount: amount)
             return refund.transform(to: payment)
         }
     }
