@@ -1,4 +1,5 @@
 import Stripe
+import Core
 
 public protocol PaymentStructure: class {
     associatedtype OrderID
@@ -12,8 +13,17 @@ public protocol PaymentStructure: class {
 }
 
 
+
+fileprivate class TSKeyedStore {
+    var dict: [String: String]
+    
+    init(_ dict: [String: String]) {
+        self.dict = dict
+    }
+}
+
 fileprivate struct Storage {
-    static var _failureMessage: [String: String] = [:]
+    static var _failureMessage: ThreadSpecificVariable<TSKeyedStore> = ThreadSpecificVariable<TSKeyedStore>.init(value: .init([:]))
 }
 
 extension PaymentStructure {
@@ -23,13 +33,13 @@ extension PaymentStructure {
         get {
             var this = self
             let address = UnsafeMutablePointer<Self>(&this).debugDescription
-            return Store._failureMessage[address]
+            return Store._failureMessage.currentValue?.dict[address]
         }
         set {
             var this = self
             let address = UnsafeMutablePointer<Self>(&this).debugDescription
             if let new = newValue {
-                Store._failureMessage[address] = new
+                Store._failureMessage.currentValue?.dict[address] = new
             }
         }
     }
