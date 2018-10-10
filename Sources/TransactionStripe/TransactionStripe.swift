@@ -37,7 +37,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
             
             return try request.content.decode(ChargeID.self)
         }.flatMap { charge in
-            return purchase.payment(on: self.container, with: self, externalID: charge)
+            return purchase.payment(on: self.container, with: self, externalID: charge.id)
         }
     }
     

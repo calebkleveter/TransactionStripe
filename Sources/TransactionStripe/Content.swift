@@ -9,6 +9,6 @@ public struct PaymentResponse: Content {
     public var transactionId: String?
 }
 
-public struct ChargeID: Content, Identifiable {
+public struct ChargeID: Content {
     public let id: String
 }
