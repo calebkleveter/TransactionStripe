@@ -46,7 +46,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
             let stripe = try self.container.make(StripeClient.self)
             let charge = try stripe.charge.create(
                 amount: payment.amount,
-                currency: payment.stripeCurrency ?? .usd,
+                currency: (payment.currency as? StripeCurrency) ?? .usd,
                 description: "Order \(payment.orderID)",
                 source: data
             )
