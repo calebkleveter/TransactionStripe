@@ -1,5 +1,8 @@
+import Transaction
 import Stripe
 import Core
+
+// MARK: - Protocols
 
 public protocol PaymentStructure: class {
     associatedtype OrderID
@@ -13,7 +16,9 @@ public protocol PaymentStructure: class {
     var externalID: String? { get set }
 }
 
+extension StripeCurrency: CurrencyProtocol {}
 
+// MARK: - Internal Helpers
 
 fileprivate class TSKeyedStore {
     var dict: [String: String]
