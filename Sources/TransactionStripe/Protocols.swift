@@ -37,15 +37,13 @@ extension PaymentStructure {
     
     internal var failureMessage: String? {
         get {
-            var this = self
-            let address = UnsafeMutablePointer<Self>(&this).debugDescription
-            return Store._failureMessage.currentValue?.dict[address]
+            let id = ObjectIdentifier(self).debugDescription
+            return Store._failureMessage.currentValue?.dict[id]
         }
         set {
-            var this = self
-            let address = UnsafeMutablePointer<Self>(&this).debugDescription
             if let new = newValue {
-                Store._failureMessage.currentValue?.dict[address] = new
+                let id = ObjectIdentifier(self).debugDescription
+                Store._failureMessage.currentValue?.dict[id] = new
             }
         }
     }
