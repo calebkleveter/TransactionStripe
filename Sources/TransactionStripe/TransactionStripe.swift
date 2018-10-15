@@ -47,7 +47,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
             let charge = try stripe.charge.create(
                 amount: payment.amount,
                 currency: StripeCurrency(rawValue: payment.currency) ?? .usd,
-                description: "Order \(payment.orderID)",
+                description: String(describing: Purchase.self) + " " + String(describing: payment.orderID),
                 source: data
             )
             
