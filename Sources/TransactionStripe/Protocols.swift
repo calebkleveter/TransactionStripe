@@ -11,7 +11,7 @@ public protocol PaymentStructure: class {
     var id: ID? { get }
     var amount: Int { get }
     var orderID: OrderID { get }
-    var currency: CurrencyType { get }
+    var currency: String { get }
     
     var externalID: String? { get set }
 }
