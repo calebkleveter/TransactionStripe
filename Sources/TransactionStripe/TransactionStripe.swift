@@ -95,7 +95,7 @@ extension StripeCreditCard: Transaction.PaymentResponse where Payment: ResponseC
                 success: true,
                 message: "Success",
                 data: nil,
-                transactionId: String(describing: payment.id)
+                transactionId: nil
             )
         }
         
