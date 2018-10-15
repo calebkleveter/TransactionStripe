@@ -8,7 +8,3 @@ public struct PaymentResponse: Content {
     public var data: String?
     public var transactionId: String?
 }
-
-public struct ChargeID: Content {
-    public let id: String
-}
