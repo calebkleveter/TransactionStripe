@@ -87,7 +87,6 @@ extension StripeCreditCard: Transaction.PaymentResponse where Payment: ResponseC
             response = .init(
                 success: false,
                 message: "Failed to create transaction",
-                redirectUrl: nil,
                 data: message,
                 transactionId: String(describing: payment.id)
             )
@@ -95,7 +94,6 @@ extension StripeCreditCard: Transaction.PaymentResponse where Payment: ResponseC
             response = TransactionStripe.PaymentResponse(
                 success: true,
                 message: "Success",
-                redirectUrl: nil,
                 data: nil,
                 transactionId: String(describing: payment.id)
             )
