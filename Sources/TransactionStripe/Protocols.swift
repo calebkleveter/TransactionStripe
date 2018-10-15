@@ -6,7 +6,7 @@ import Core
 
 public protocol PaymentStructure: class {
     associatedtype OrderID
-    associatedtype ID: Codable
+    associatedtype ID
     
     var id: ID? { get }
     var amount: Int { get }
