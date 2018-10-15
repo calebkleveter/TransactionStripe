@@ -3,7 +3,9 @@ import Vapor
 import Stripe
 import Service
 
-public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentRepresentable, Prc.Payment == Pay, Pay: PaymentStructure {
+public final class StripeCreditCard<Prc, Pay>: PaymentMethod, AmountConverter where
+    Prc: PaymentRepresentable, Prc.Payment == Pay, Pay: PaymentStructure
+{
     
     // MARK: - Types
     public typealias Purchase = Prc
@@ -44,9 +46,11 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
     public func execute(payment: Pay, with data: String) -> EventLoopFuture<Pay> {
         return Future.flatMap(on: self.container) { () -> Future<StripeCharge> in
             let stripe = try self.container.make(StripeClient.self)
+            
+            let currency = StripeCurrency(rawValue: payment.currency) ?? .usd
             let charge = try stripe.charge.create(
-                amount: payment.amount,
-                currency: StripeCurrency(rawValue: payment.currency) ?? .usd,
+                amount: self.amount(for: payment.total, as: currency),
+                currency: currency,
                 description: String(describing: Purchase.self) + " " + String(describing: payment.orderID),
                 source: data
             )
@@ -68,6 +72,10 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where Prc: PaymentR
             let refund = try stripe.refund.create(charge: external, amount: amount)
             return refund.transform(to: payment)
         }
+    }
+    
+    public func amount(for amount: Int, as currency: StripeCurrency) -> Int {
+        return amount
     }
 }
 
