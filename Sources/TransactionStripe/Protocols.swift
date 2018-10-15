@@ -9,7 +9,7 @@ public protocol PaymentStructure: class {
     associatedtype ID
     
     var id: ID? { get }
-    var amount: Int { get }
+    var total: Int { get }
     var orderID: OrderID { get }
     var currency: String { get }
     
