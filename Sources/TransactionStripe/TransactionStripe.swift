@@ -3,7 +3,7 @@ import Vapor
 import Stripe
 import Service
 
-public final class StripeCreditCard<Prc, Pay>: PaymentMethod, AmountConverter where
+public final class StripeCreditCard<Prc, Pay>: PaymentMethod where
     Prc: PaymentRepresentable, Prc.Payment == Pay, Pay: PaymentStructure
 {
     
@@ -49,7 +49,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod, AmountConverter wh
             
             let currency = StripeCurrency(rawValue: payment.currency) ?? .usd
             let charge = try stripe.charge.create(
-                amount: self.amount(for: payment.total, as: currency),
+                amount: currency.amount(for: payment.total),
                 currency: currency,
                 description: String(describing: Purchase.self) + " " + String(describing: payment.orderID),
                 source: data
@@ -72,10 +72,6 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod, AmountConverter wh
             let refund = try stripe.refund.create(charge: external, amount: amount)
             return refund.transform(to: payment)
         }
-    }
-    
-    public func amount(for amount: Int, as currency: StripeCurrency) -> Int {
-        return amount
     }
 }
 

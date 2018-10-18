@@ -18,6 +18,16 @@ public protocol PaymentStructure: class {
 
 extension StripeCurrency: CurrencyProtocol {}
 
+extension StripeCurrency: AmountConverter {
+    public func amount(for amount: Int, as currency: StripeCurrency) -> Int {
+        return amount
+    }
+    
+    public func amount(for amount: Int) -> Int {
+        return self.amount(for: amount, as: self)
+    }
+}
+
 // MARK: - Internal Helpers
 
 fileprivate class TSKeyedStore {
