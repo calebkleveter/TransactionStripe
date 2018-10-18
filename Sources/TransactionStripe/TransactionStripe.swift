@@ -31,7 +31,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod, AmountConverter wh
         self.container = container
     }
     
-    public func payment(for purchase: Prc) -> EventLoopFuture<Pay> {
+    public func payment(for purchase: Prc, with content: Prc.PaymentContent) -> EventLoopFuture<Pay> {
         return Future.flatMap(on: self.container) { () -> Future<String> in
             guard let request = self.container as? Request else {
                 throw Abort(.internalServerError, reason: "Attempted to decode a Stripe type charge from a non-request container")
@@ -39,7 +39,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod, AmountConverter wh
             
             return request.content.get(String.self, at: "id")
         }.flatMap { id in
-            return purchase.payment(on: self.container, with: self, externalID: id)
+            return purchase.payment(on: self.container, with: self, content: content, externalID: id)
         }
     }
     
