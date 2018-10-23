@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/vapor-community/stripe-provider.git",
         "state": {
           "branch": null,
-          "revision": "92ff244948a204202bef8f0991b1e7a36b9c847f",
-          "version": "2.2.2"
+          "revision": "f153cfe204ef92265d94eb66f2fcf6cf2b0ced13",
+          "version": "2.2.4"
         }
       },
       {
@@ -131,9 +131,9 @@
         "package": "Transaction",
         "repositoryURL": "https://github.com/skelpo/Transaction.git",
         "state": {
-          "branch": "develop",
-          "revision": "d2f5e6f8204eebf3eda32a45d9148d31d48bc703",
-          "version": null
+          "branch": null,
+          "revision": "ad0d3f69c76aec75372fa472576ea46a01524b2e",
+          "version": "0.5.0"
         }
       },
       {
@@ -168,8 +168,8 @@
         "repositoryURL": "https://github.com/vapor/websocket.git",
         "state": {
           "branch": null,
-          "revision": "149af03348f60ac8b84defdf277112d62fd8c704",
-          "version": "1.0.2"
+          "revision": "eb4277f75f1d96a3d15c852cdd89af1799093dcd",
+          "version": "1.1.0"
         }
       }
     ]
