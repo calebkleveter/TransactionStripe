@@ -37,7 +37,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where
                 throw Abort(.internalServerError, reason: "Attempted to decode a Stripe type charge from a non-request container")
             }
             
-            return request.content.get(String.self, at: "id")
+            return request.content.get(String.self, at: "stripeToken")
         }.flatMap { id in
             return purchase.payment(on: self.container, with: self, content: content, externalID: id)
         }
