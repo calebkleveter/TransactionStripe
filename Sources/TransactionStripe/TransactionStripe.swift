@@ -10,7 +10,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where
     // MARK: - Types
     public typealias Purchase = Prc
     public typealias Payment = Pay
-    public typealias ExecutionData = String
+    public typealias ExecutionData = Token
     public typealias ExecutionResponse = PaymentResponse
     
     
@@ -37,13 +37,13 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where
                 throw Abort(.internalServerError, reason: "Attempted to decode a Stripe type charge from a non-request container")
             }
             
-            return request.content.get(String.self, at: "stripeToken")
+            return request.content.get(Token.self).map { $0.stripeToken }
         }.flatMap { id in
             return purchase.payment(on: self.container, with: self, content: content, externalID: id)
         }
     }
     
-    public func execute(payment: Pay, with data: String) -> EventLoopFuture<Pay> {
+    public func execute(payment: Pay, with data: Token) -> EventLoopFuture<Pay> {
         return Future.flatMap(on: self.container) { () -> Future<StripeCharge> in
             let stripe = try self.container.make(StripeClient.self)
             
@@ -52,7 +52,7 @@ public final class StripeCreditCard<Prc, Pay>: PaymentMethod where
                 amount: currency.amount(for: payment.total),
                 currency: currency,
                 description: String(describing: Purchase.self) + " " + String(describing: payment.orderID),
-                source: data
+                source: data.stripeToken
             )
             
             return charge
