@@ -16,3 +16,10 @@ public struct PaymentResponse: Content {
     /// The ID of the internal model that the Stripe payment represents.
     public var transactionId: String?
 }
+
+/// The ID of a Stripe charge.
+public struct Token: Content {
+    
+    /// The decoded token.
+    let stripeToken: String
+}
